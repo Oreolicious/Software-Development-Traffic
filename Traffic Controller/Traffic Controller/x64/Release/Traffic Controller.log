@@ -1,12 +1,9 @@
-﻿  main.cpp
-  Road.cpp
-  RoadController.cpp
-  SocketHandler.cpp
-D:\Github\Software-Development-Traffic\Traffic Controller\Traffic Controller\SocketHandler.cpp(78,49): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-D:\Github\Software-Development-Traffic\Traffic Controller\Traffic Controller\SocketHandler.cpp(96,19): warning C4244: 'argument': conversion from 'SOCKET' to 'int', possible loss of data
+﻿  SocketHandler.cpp
+D:\Github\Software-Development-Traffic\Traffic Controller\Traffic Controller\SocketHandler.cpp(80,49): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+D:\Github\Software-Development-Traffic\Traffic Controller\Traffic Controller\SocketHandler.cpp(98,19): warning C4244: 'argument': conversion from 'SOCKET' to 'int', possible loss of data
   Generating code
-  943 of 949 functions (99.4%) were compiled, the rest were copied from previous compilation.
-    4 functions were new in current compilation
-    1 functions had inline decision re-evaluated but remain unchanged
+  1 of 949 functions ( 0.1%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    3 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   Traffic Controller.vcxproj -> D:\Github\Software-Development-Traffic\Traffic Controller\x64\Release\Traffic Controller.exe

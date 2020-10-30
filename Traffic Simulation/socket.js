@@ -16,7 +16,6 @@ socket.onopen = () => {
   socket.onmessage = (evt) => {
     console.log("message received")
     data = JSON.parse(evt.data)["payload"]
-    data = data.substring(0, data.length-1)
     while(data[0] != "{" && data.length > 0){
       data = data.substring(1)
     }

@@ -54,7 +54,9 @@ bool SocketHandler::receive(buffer& buf, int& bytesReceived)
 	bytesReceived = recv(clientSocket, buf, MAX_BUFFER_SIZE, 0);
 	if (bytesReceived == SOCKET_ERROR)
 	{
-		std::cerr << "Error in recv()" << std::endl;
+		std::cerr << "Error receiving from client, closing connection" << std::endl;
+		closesocket(clientSocket);
+		clientSocket = INVALID_SOCKET;
 		return false;
 	}
 
