@@ -23,7 +23,9 @@ bool SocketHandler::waitForClient(u_short port)
 
 	clientSocket = accept(listening, (sockaddr*)&client, &clientSize);
 	if (clientSocket == INVALID_SOCKET) {
-		std::cerr << "Error when connecting to client" << std::endl;
+		utility::setConsoleColor(12);
+		std::cerr << utility::timestamp() << "Error when connecting to client" << std::endl;
+		utility::setConsoleColor(7);
 		return false;
 	}
 
@@ -32,13 +34,17 @@ bool SocketHandler::waitForClient(u_short port)
 
 	if (getnameinfo((sockaddr*)&client, sizeof(client), host, NI_MAXHOST, service, NI_MAXSERV, 0) == 0)
 	{
-		std::cout << host << " connected on port " << service << std::endl;
+		utility::setConsoleColor(10);
+		std::cout << utility::timestamp() << host << " connected on port " << service << std::endl;
+		utility::setConsoleColor(7);
 	}
 	else
 	{
 		inet_ntop(AF_INET, &client.sin_addr, host, NI_MAXHOST);
-		std::cout << host << " connected on port " <<
+		utility::setConsoleColor(10);
+		std::cout << utility::timestamp() << host << " connected on port " <<
 			ntohs(client.sin_port) << std::endl;
+		utility::setConsoleColor(7);
 	}
 
 	// Close listening socket
@@ -54,7 +60,9 @@ bool SocketHandler::receive(buffer& buf, int& bytesReceived)
 	bytesReceived = recv(clientSocket, buf, MAX_BUFFER_SIZE, 0);
 	if (bytesReceived == SOCKET_ERROR)
 	{
-		std::cerr << "Error receiving from client, closing connection" << std::endl;
+		utility::setConsoleColor(12);
+		std::cerr << utility::timestamp() << "Error receiving from client, closing connection" << std::endl;
+		utility::setConsoleColor(7);
 		closesocket(clientSocket);
 		clientSocket = INVALID_SOCKET;
 		return false;
@@ -62,13 +70,16 @@ bool SocketHandler::receive(buffer& buf, int& bytesReceived)
 
 	if (bytesReceived == 0)
 	{
-		std::cout << "Client disconnected " << std::endl;
+		utility::setConsoleColor(12);
+		std::cout << utility::timestamp()  << "Client disconnected " << std::endl;
+		utility::setConsoleColor(7);
 		closesocket(clientSocket);
 		clientSocket = INVALID_SOCKET;
 		return false;
 	}
-
-	std::cout << "Received: " << std::string(buf, 0, bytesReceived) << std::endl;
+	utility::setConsoleColor(14);
+	std::cout << utility::timestamp() << "Received: " << std::string(buf, 0, bytesReceived) << std::endl;
+	utility::setConsoleColor(7);
 	return true;
 }
 
@@ -76,9 +87,11 @@ bool SocketHandler::sendMessage(std::string message)
 {
 	message = std::to_string(message.length()) + ":" + message;
 	buffer buf;
-	strcpy(buf, message.c_str());
+	strcpy_s(buf, message.c_str());
 	send(clientSocket, buf, message.length() + 1, 0);
-	std::cout << "Sent: " << message << std::endl;
+	utility::setConsoleColor(14);
+	std::cout << utility::timestamp() << "Sent: " << message << std::endl;
+	utility::setConsoleColor(7);
 	return true;
 }
 
@@ -108,7 +121,9 @@ void SocketHandler::initializeWinsock()
 	int wsOk = WSAStartup(ver, &wsData);
 	if (wsOk != 0)
 	{
-		std::cerr << "Can't Initialize winsock! Quitting" << std::endl;
+		utility::setConsoleColor(12);
+		std::cerr << utility::timestamp() << "Can't Initialize winsock! Quitting" << std::endl;
+		utility::setConsoleColor(7);
 		return;
 	}
 }
@@ -119,7 +134,9 @@ void SocketHandler::initializeListeningSocket(u_short port)
 	listening = socket(AF_INET, SOCK_STREAM, 0);
 	if (listening == INVALID_SOCKET)
 	{
-		std::cerr << "Can't create a socket! Quitting" << std::endl;
+		utility::setConsoleColor(12);
+		std::cerr << utility::timestamp() << "Can't create a socket! Quitting" << std::endl;
+		utility::setConsoleColor(7);
 		return;
 	}
 

@@ -4,6 +4,7 @@
 #include "Road.h"
 #include "RoadController.h"
 #include "nlohmann/json.hpp" 
+#include "Utility.h"
 
 using json = nlohmann::json;
 using u_short = unsigned short;
@@ -18,7 +19,7 @@ int main() {
 
 	while (true) {
 		if (!handler.hasClient()) {
-			std::cout << "Waiting for a client to connect..." << std::endl;
+			std::cout << utility::timestamp() << "Waiting for a client to connect..." << std::endl;
 			do {
 				handler.waitForClient(54000);
 			} while (!handler.hasClient());

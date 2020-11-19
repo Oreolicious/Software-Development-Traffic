@@ -2,13 +2,13 @@
 #include <WS2tcpip.h>
 #include <string>
 #include <stdexcept>
+#include "Utility.h"
 
 #define MAX_BUFFER_SIZE 4096
 
 using buffer = char[MAX_BUFFER_SIZE];
 
 #pragma comment (lib, "ws2_32.lib")
-#pragma warning(disable : 4996)
 
 class SocketHandler {
 public:
