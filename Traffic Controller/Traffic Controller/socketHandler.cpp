@@ -88,7 +88,7 @@ bool SocketHandler::sendMessage(std::string message)
 	message = std::to_string(message.length()) + ":" + message;
 	buffer buf;
 	strcpy_s(buf, message.c_str());
-	send(clientSocket, buf, message.length() + 1, 0);
+	send(clientSocket, buf, message.length(), 0);
 	utility::setConsoleColor(14);
 	std::cout << utility::timestamp() << "Sent: " << message << std::endl;
 	utility::setConsoleColor(7);
