@@ -132,13 +132,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Road.cpp" />
-    <ClCompile Include="RoadController.cpp" />
+    <ClCompile Include="RoadLayout.cpp" />
+    <ClCompile Include="RoadManager.cpp" />
     <ClCompile Include="SocketHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Road.h" />
-    <ClInclude Include="RoadController.h" />
+    <ClInclude Include="Lane.h" />
+    <ClInclude Include="RoadLayout.h" />
+    <ClInclude Include="RoadManager.h" />
     <ClInclude Include="SocketHandler.h" />
     <ClInclude Include="Utility.h" />
   </ItemGroup>

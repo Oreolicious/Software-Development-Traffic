@@ -1,0 +1,4 @@
+﻿  main.cpp
+  RoadLayout.cpp
+D:\Windows Kits\10\Include\10.0.18362.0\um\winnt.h(173,1): fatal error C1189: #error:  "No Target Architecture"
+  SocketHandler.cpp

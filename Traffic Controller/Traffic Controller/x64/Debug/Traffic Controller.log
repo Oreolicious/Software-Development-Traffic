@@ -1,0 +1,3 @@
+﻿  RoadManager.cpp
+D:\Github\Software-Development-Traffic\Traffic Controller\Traffic Controller\RoadManager.cpp(95,18): warning C4553: '==': result of expression not used; did you intend '='?
+  Traffic Controller.vcxproj -> D:\Github\Software-Development-Traffic\Traffic Controller\x64\Debug\Traffic Controller.exe
