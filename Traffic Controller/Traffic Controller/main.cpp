@@ -42,6 +42,7 @@ int main() {
 			stop_flag = false;
 			messageThread = std::thread(handleMessage, std::ref(handler), std::ref(manager), std::ref(stop_flag), std::ref(manager_available));
 			timeOfLastUpdate = std::chrono::system_clock::now();
+			handler.sendMessage(manager.toJson().dump());
 		}
 		// If statement gets triggered every 5 seconds to update the traffic lights
 		auto currentTime = std::chrono::system_clock::now();
