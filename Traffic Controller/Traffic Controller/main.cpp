@@ -22,6 +22,7 @@ int main() {
 
 	// Timing information for sending updates
 	std::chrono::system_clock::time_point timeOfLastUpdate;
+	unsigned short updateWait = 5;
 
 	RoadManager manager("./Layouts/main.rl");
 	if (!manager.isValid()) {
@@ -46,17 +47,20 @@ int main() {
 		}
 		// If statement gets triggered every 5 seconds to update the traffic lights
 		auto currentTime = std::chrono::system_clock::now();
-		if (std::chrono::duration<double>(currentTime - timeOfLastUpdate).count() >= 5 && manager_available) {
-
+		if (std::chrono::duration<double>(currentTime - timeOfLastUpdate).count() >= updateWait && manager_available) {
+			updateWait = 5;
+			manager_available = false;
 			utility::setConsoleColor(3);
 			std::cerr << utility::timestamp() << "Calculating best configuration" << std::endl;
 			utility::setConsoleColor(7);
 
 			// If true, best configuration has changed so send an update to the simulation
 			if (manager.updateLanesForBestConfig()) {
+				updateWait += 3;
 				handler.sendMessage(manager.toJson().dump());
 			}
 			timeOfLastUpdate = std::chrono::system_clock::now();
+			manager_available = true;
 		}
 	}
 	return 0;

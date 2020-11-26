@@ -68,7 +68,6 @@ bool RoadManager::updateLanesForBestConfig()
 			totalValue += lane->currentPriority;
 		}
 		configurationValues.push_back(totalValue);
-
 	}
 	
 	// Get number of best configuration score
@@ -92,7 +91,7 @@ bool RoadManager::updateLanesForBestConfig()
 			return false;
 		}
 		else {
-			currentConfig == nullptr;
+			currentConfig = nullptr;
 			for (Lane& lane : lanes) {
 				lane.isOn = false;
 			}
@@ -104,10 +103,9 @@ bool RoadManager::updateLanesForBestConfig()
 		if (currentConfig && (*currentConfig) == newBest)
 			return false;
 		else {
-			if (currentConfig != nullptr)
-				for (unsigned int i = 0; i < currentConfig->size(); i++) {
-					currentConfig->at(i)->isOn = false;
-				}
+			for (Lane& lane : lanes) {
+				lane.isOn = false;
+			}
 			for (Lane* lane : newBest) {
 				lane->isOn = true;
 			}
