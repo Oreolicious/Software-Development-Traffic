@@ -12,17 +12,20 @@ using u_short = unsigned short;
 
 // Forward declarations
 void handleMessage(SocketHandler& handler, RoadManager& manager, std::atomic<bool>& stop_flag, std::atomic<bool>& manager_available);
+void dispatchMessage(SocketHandler& handler, std::string message, std::atomic<bool>& isSending);
 
 int main() {
 	SocketHandler handler;
 	// Threading requirements
 	std::thread messageThread;
+	std::thread configurationDispatcher;
 	std::atomic<bool> stop_flag = true;
 	std::atomic<bool> manager_available = true;
+	std::atomic<bool> isSending = false;
 
 	// Timing information for sending updates
 	std::chrono::system_clock::time_point timeOfLastUpdate;
-	unsigned short updateWait = 5;
+	unsigned short updateWait = 2;
 
 	RoadManager manager("./Layouts/main.rl");
 	if (!manager.isValid()) {
@@ -56,8 +59,13 @@ int main() {
 
 			// If true, best configuration has changed so send an update to the simulation
 			if (manager.updateLanesForBestConfig()) {
-				updateWait += 3;
-				handler.sendMessage(manager.toJson().dump());
+				if (isSending) {
+					configurationDispatcher.join();
+					isSending = false;
+				}
+				
+				updateWait += 5;
+				configurationDispatcher = std::thread(dispatchMessage, std::ref(handler), manager.toJson().dump(), std::ref(isSending));
 			}
 			timeOfLastUpdate = std::chrono::system_clock::now();
 			manager_available = true;
@@ -98,6 +106,20 @@ void handleMessage(SocketHandler& handler, RoadManager& manager, std::atomic<boo
 				manager_available = true;
 			}
 		}
+	}
+}
+
+void dispatchMessage(SocketHandler& handler, std::string message, std::atomic<bool>& isSending)
+{
+	isSending = true;
+	json redJson = json::parse(message);
+	for (auto& el : redJson.items()) {
+		redJson[el.key()] = 0;
+	}
+	handler.sendMessage(redJson.dump());
+	std::this_thread::sleep_for(std::chrono::seconds(5));
+	if (handler.hasClient()) {
+		handler.sendMessage(message);
 	}
 }
 

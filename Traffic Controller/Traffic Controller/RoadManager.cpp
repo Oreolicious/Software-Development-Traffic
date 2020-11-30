@@ -79,6 +79,9 @@ bool RoadManager::updateLanesForBestConfig()
 			bestConfig = i;
 			bestScore = configurationValues.at(i);
 		}
+		if (configurationValues.at(i) == bestScore && configurations.at(i).size() > configurations.at(bestConfig).size()) {
+			bestConfig = i;
+		}
 	}
 
 	// Only continue if the current best configuration has a score above 0

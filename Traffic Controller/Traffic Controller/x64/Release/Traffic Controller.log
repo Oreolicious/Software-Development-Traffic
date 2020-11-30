@@ -1,12 +1,7 @@
-﻿  RoadManager.cpp
-D:\Github\Software-Development-Traffic\Traffic Controller\Traffic Controller\RoadManager.cpp(80,38): warning C4244: '=': conversion from '_Ty' to 'unsigned short', possible loss of data
-          with
-          [
-              _Ty=double
-          ]
+﻿  main.cpp
   Generating code
-  2 of 1828 functions ( 0.1%) were compiled, the rest were copied from previous compilation.
+  1 of 1895 functions (<0.1%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    8 functions had inline decision re-evaluated but remain unchanged
+    3 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   Traffic Controller.vcxproj -> D:\Github\Software-Development-Traffic\Traffic Controller\x64\Release\Traffic Controller.exe
