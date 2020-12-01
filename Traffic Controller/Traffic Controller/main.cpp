@@ -12,7 +12,7 @@ using u_short = unsigned short;
 
 // Forward declarations
 void handleMessage(SocketHandler& handler, RoadManager& manager, std::atomic<bool>& stop_flag, std::atomic<bool>& manager_available);
-void dispatchMessage(SocketHandler& handler, std::string message, std::atomic<bool>& isSending);
+void dispatchMessage(SocketHandler& handler, RoadManager& manager, std::string message, std::atomic<bool>& isSending, std::atomic<bool>& manager_available);
 
 int main() {
 	SocketHandler handler;
@@ -65,7 +65,7 @@ int main() {
 				}
 				
 				updateWait += 5;
-				configurationDispatcher = std::thread(dispatchMessage, std::ref(handler), manager.toJson().dump(), std::ref(isSending));
+				configurationDispatcher = std::thread(dispatchMessage, std::ref(handler), std::ref(manager), manager.toJson().dump(), std::ref(isSending), std::ref(manager_available));
 			}
 			timeOfLastUpdate = std::chrono::system_clock::now();
 			manager_available = true;
@@ -109,7 +109,7 @@ void handleMessage(SocketHandler& handler, RoadManager& manager, std::atomic<boo
 	}
 }
 
-void dispatchMessage(SocketHandler& handler, std::string message, std::atomic<bool>& isSending)
+void dispatchMessage(SocketHandler& handler, RoadManager& manager, std::string message, std::atomic<bool>& isSending, std::atomic<bool>& manager_availalbe)
 {
 	isSending = true;
 	json redJson = json::parse(message);
@@ -118,8 +118,14 @@ void dispatchMessage(SocketHandler& handler, std::string message, std::atomic<bo
 	}
 	handler.sendMessage(redJson.dump());
 	std::this_thread::sleep_for(std::chrono::seconds(5));
-	if (handler.hasClient()) {
-		handler.sendMessage(message);
+	while (!manager_availalbe) {
+		std::this_thread::sleep_for(std::chrono::milliseconds(50));
 	}
+	manager_availalbe = false;
+	manager.updateLanesForBestConfig();
+	if (handler.hasClient()) {
+		handler.sendMessage(manager.toJson().dump());
+	}
+	manager_availalbe = true;
 }
 
