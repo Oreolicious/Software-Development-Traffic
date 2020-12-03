@@ -3,16 +3,22 @@
 #include <iostream>
 #include "Utility.h"
 
+/// <summary>
+/// Create a new RoadManager instance based on a layout file that describes the intersection
+/// </summary>
+/// <param name="layoutFile"></param>
 RoadManager::RoadManager(std::string layoutFile)
 {
 	std::cerr << utility::timestamp() << "Attempting to parse layout file: " << layoutFile << std::endl;
-	RoadLayout layout;
+	RoadLayout layout; // Object that handles file parsing
 	layout.loadLayout(layoutFile);
-	this->lanes = std::vector<Lane>(layout.getLayout());
+	this->lanes = std::vector<Lane>(layout.getLayout()); // Load layout from RoadLayout object
 
+	// If no lanes were loaded, no point in continuing (RoadLayout invalid)
 	if (lanes.size() == 0)
 		return;
 
+	// Get all possible lane configurations based on their individual exclusions
 	for (Lane& lane : lanes) {
 		std::vector<Lane*> lanesCopy;
 		lanesCopy.reserve(lanes.size());
@@ -36,6 +42,7 @@ RoadManager::RoadManager(std::string layoutFile)
 		}
 	}
 
+	// Remove duplicate layouts (Important optimization step)
 	removeDuplicates(configurations);
 
 	utility::setConsoleColor(10);
@@ -43,6 +50,10 @@ RoadManager::RoadManager(std::string layoutFile)
 	utility::setConsoleColor(7);
 }
 
+/// <summary>
+/// Update all pressure sensor values for the lanes specified in the input json
+/// </summary>
+/// <param name="update">Json that holds pressure sensor data</param>
 void RoadManager::updateLanes(json update)
 {
 	for (auto& el : update.items()) {
@@ -53,6 +64,10 @@ void RoadManager::updateLanes(json update)
 	}
 }
 
+/// <summary>
+/// Get all individual configuration scores and see which configuration gets the highest score
+/// </summary>
+/// <returns>Returns true if there is a new best layout</returns>
 bool RoadManager::updateLanesForBestConfig()
 {
 	// Update all the priority values for the lanes
@@ -102,6 +117,7 @@ bool RoadManager::updateLanesForBestConfig()
 		}
 	}
 	else {
+		// Update all the lanes based on the new best configuration
 		std::vector<Lane*> newBest = configurations.at(bestConfig);
 		if (currentConfig && (*currentConfig) == newBest)
 			return false;
@@ -118,11 +134,19 @@ bool RoadManager::updateLanesForBestConfig()
 	
 }
 
+/// <summary>
+/// Check function to see if RoadManager holds lanes
+/// </summary>
+/// <returns>Returns true if there is a lane in the lanes vector, else return false for invalid layout</returns>
 bool RoadManager::isValid()
 {
 	return this->lanes.size() > 0;
 }
 
+/// <summary>
+/// Put all names of the lanes in a json with their current on / off status
+/// </summary>
+/// <returns>A json of all light on / off status variables</returns>
 json RoadManager::toJson()
 {
 	json laneStates;

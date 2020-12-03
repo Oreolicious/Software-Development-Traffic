@@ -1,3 +1,13 @@
-﻿  RoadManager.cpp
-D:\Github\Software-Development-Traffic\Traffic Controller\Traffic Controller\RoadManager.cpp(95,18): warning C4553: '==': result of expression not used; did you intend '='?
+﻿  RoadLayout.cpp
+  RoadManager.cpp
+D:\Github\Software-Development-Traffic\Traffic Controller\Traffic Controller\RoadManager.cpp(95,38): warning C4244: '=': conversion from '_Ty' to 'unsigned short', possible loss of data
+          with
+          [
+              _Ty=double
+          ]
+  SocketHandler.cpp
+D:\Github\Software-Development-Traffic\Traffic Controller\Traffic Controller\SocketHandler.cpp(108,45): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+D:\Github\Software-Development-Traffic\Traffic Controller\Traffic Controller\SocketHandler.cpp(138,19): warning C4244: 'argument': conversion from 'SOCKET' to 'int', possible loss of data
+  main.cpp
+  Generating Code...
   Traffic Controller.vcxproj -> D:\Github\Software-Development-Traffic\Traffic Controller\x64\Debug\Traffic Controller.exe

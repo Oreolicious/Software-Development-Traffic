@@ -1,7 +1,17 @@
-﻿  main.cpp
+﻿  RoadLayout.cpp
+  RoadManager.cpp
+D:\Github\Software-Development-Traffic\Traffic Controller\Traffic Controller\RoadManager.cpp(95,38): warning C4244: '=': conversion from '_Ty' to 'unsigned short', possible loss of data
+          with
+          [
+              _Ty=double
+          ]
+  SocketHandler.cpp
+D:\Github\Software-Development-Traffic\Traffic Controller\Traffic Controller\SocketHandler.cpp(108,45): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+D:\Github\Software-Development-Traffic\Traffic Controller\Traffic Controller\SocketHandler.cpp(138,19): warning C4244: 'argument': conversion from 'SOCKET' to 'int', possible loss of data
+  main.cpp
   Generating code
-  74 of 1906 functions ( 3.9%) were compiled, the rest were copied from previous compilation.
-    42 functions were new in current compilation
-    13 functions had inline decision re-evaluated but remain unchanged
+  8 of 1906 functions ( 0.4%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    3 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   Traffic Controller.vcxproj -> D:\Github\Software-Development-Traffic\Traffic Controller\x64\Release\Traffic Controller.exe

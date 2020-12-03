@@ -7,18 +7,20 @@
 #include "Utility.h"
 #include "RoadManager.h"
 
-using json = nlohmann::json;
+using json = nlohmann::json; // Define json as nlohmann library json
 using u_short = unsigned short;
 
 // Forward declarations
-void handleMessage(SocketHandler& handler, RoadManager& manager, std::atomic<bool>& stop_flag, std::atomic<bool>& manager_available);
-void dispatchMessage(SocketHandler& handler, RoadManager& manager, std::string message, std::atomic<bool>& isSending, std::atomic<bool>& manager_available);
+void handleMessage(SocketHandler& handler, RoadManager& manager, std::atomic<bool>& stop_flag, std::atomic<bool>& manager_available); // Thread function for receiving messages from client
+void dispatchMessage(SocketHandler& handler, RoadManager& manager, std::string message, std::atomic<bool>& isSending, std::atomic<bool>& manager_available); // Thread function for sending a new configuration to client
 
 int main() {
-	SocketHandler handler;
+	SocketHandler handler; // Socket communication handler instance
+
 	// Threading requirements
-	std::thread messageThread;
-	std::thread configurationDispatcher;
+	std::thread messageThread;				// Create thread for handling messages
+	std::thread configurationDispatcher;	// Create thread for sending messages
+	// Several bool flags for threading functions
 	std::atomic<bool> stop_flag = true;
 	std::atomic<bool> manager_available = true;
 	std::atomic<bool> isSending = false;
@@ -27,22 +29,29 @@ int main() {
 	std::chrono::system_clock::time_point timeOfLastUpdate;
 	unsigned short updateWait = 2;
 
+	// Load layout file into the RoadManager. Terminates the program if invalid layout file
 	RoadManager manager("./Layouts/main.rl");
 	if (!manager.isValid()) {
 		std::cin.get();
 		return 1;
 	}
 
+	// Main program loop
 	while (true) {
+		// If handler doesn't have client, wait for a new one
+		// There's no point in running the main loop without client
 		if (!handler.hasClient()) {
+			// Join the receive thread in case it is running
 			if (stop_flag == false) {
 				stop_flag = true;
 				messageThread.join();
 			}
 			std::cout << utility::timestamp() << "Waiting for a client to connect..." << std::endl;
+			// Wait for a new client, retry if failed
 			do {
 				handler.waitForClient(54000);
 			} while (!handler.hasClient());
+			// Start receive function and send a message of the last layout
 			stop_flag = false;
 			messageThread = std::thread(handleMessage, std::ref(handler), std::ref(manager), std::ref(stop_flag), std::ref(manager_available));
 			timeOfLastUpdate = std::chrono::system_clock::now();
@@ -74,16 +83,26 @@ int main() {
 	return 0;
 }
 
+/// <summary>
+/// Thread function for receiving messages from client
+/// </summary>
+/// <param name="handler">Reference to the SocketHandler instance</param>
+/// <param name="manager">Reference to the RoadManager instance</param>
+/// <param name="stop_flag">Reference to the stop flag atomic boolean</param>
+/// <param name="manager_available">Reference to the manager_available flag atomic boolean</param>
 void handleMessage(SocketHandler& handler, RoadManager& manager, std::atomic<bool>& stop_flag, std::atomic<bool>& manager_available) {
 	buffer message;
 	int bytesReceived;
 
+	// Run loop while thread not asked to stop
 	while (!stop_flag) {
+		// Check if message available
 		if (handler.hasMessage(500) && !stop_flag) {
-			handler.receive(message, bytesReceived);
+			handler.receive(message, bytesReceived); // Receive message
 			unsigned short bufferSize = sizeof(message) / sizeof(char);
 			std::string jsonSize;
 			unsigned short i;
+			//for each byte in the buffer, look for the size header with delim :
 			for (i = 0; i < bufferSize; i++) {
 				if (message[i] == ':')
 					break;
@@ -99,6 +118,7 @@ void handleMessage(SocketHandler& handler, RoadManager& manager, std::atomic<boo
 					break;
 				}
 			}
+			// If message has valid size, parse the json and update manager instance
 			if (i != 0) {
 				manager_available = false;
 				json receivedJson = json::parse(std::string(message, i + 1, std::stoi(jsonSize)));
@@ -109,23 +129,32 @@ void handleMessage(SocketHandler& handler, RoadManager& manager, std::atomic<boo
 	}
 }
 
-void dispatchMessage(SocketHandler& handler, RoadManager& manager, std::string message, std::atomic<bool>& isSending, std::atomic<bool>& manager_availalbe)
+/// <summary>
+/// Dispatch a message to client
+/// </summary>
+/// <param name="handler">Reference to SocketHandler instance</param>
+/// <param name="manager">Reference to the RoadManager instance</param>
+/// <param name="message">Current message, will not be used as eventual message</param>
+/// <param name="isSending">atomic boolean flag for status of sending message</param>
+/// <param name="manager_available">atomic boolean flag for availability of RoadManager instance</param>
+void dispatchMessage(SocketHandler& handler, RoadManager& manager, std::string message, std::atomic<bool>& isSending, std::atomic<bool>& manager_available)
 {
 	isSending = true;
 	json redJson = json::parse(message);
 	for (auto& el : redJson.items()) {
 		redJson[el.key()] = 0;
 	}
-	handler.sendMessage(redJson.dump());
-	std::this_thread::sleep_for(std::chrono::seconds(5));
-	while (!manager_availalbe) {
+	handler.sendMessage(redJson.dump()); // Send json with all off values
+	std::this_thread::sleep_for(std::chrono::seconds(5)); // wait for 5 seconds (Ontruimingstijd)
+	while (!manager_available) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(50));
 	}
-	manager_availalbe = false;
+	manager_available = false;
+	// Send current best configuration
 	manager.updateLanesForBestConfig();
 	if (handler.hasClient()) {
 		handler.sendMessage(manager.toJson().dump());
 	}
-	manager_availalbe = true;
+	manager_available = true;
 }
 

@@ -3,6 +3,10 @@
 #include "Utility.h"
 #include <iostream>
 
+/// <summary>
+/// Load a layout from a layout file location
+/// </summary>
+/// <param name="filename">Filepath to the layout file</param>
 void RoadLayout::loadLayout(std::string filename)
 {
 	try {
@@ -31,6 +35,11 @@ void RoadLayout::loadLayout(std::string filename)
 	}
 }
 
+/// <summary>
+/// Get the layout currently loaded.
+/// Use loadLayout first
+/// </summary>
+/// <returns>A vector of lanes that hold the information for each lane</returns>
 std::vector<Lane> RoadLayout::getLayout()
 {
 	return this->layout;
